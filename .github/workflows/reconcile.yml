@@ -1,0 +1,19 @@
+name: Nightly reconcile
+
+on:
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wake the API
+        run: curl -s https://jobs-api-no94.onrender.com/jobs > /dev/null || true
+
+      - name: Call reconcile
+        run: |
+          curl -f -X POST https://jobs-api-no94.onrender.com/admin/reconcile \
+            -H "X-Admin-Token: ${{ secrets.ADMIN_TOKEN }}" \
+            --max-time 120
