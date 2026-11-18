@@ -11,6 +11,7 @@ A FastAPI + Postgres jobs board API with Stripe payments for featured listings.
 - Signature-verified Stripe webhook that is idempotent, so duplicate events never double-process
 - Reconciliation endpoint that uses Stripe as the source of truth to recover missed webhooks
 - Admin routes protected with a header token and constant-time comparison
+- Nightly GitHub Actions job that calls the protected reconcile endpoint automatically
 
 ## Tech stack
 Python, FastAPI, PostgreSQL (Neon), psycopg, Stripe, Render
@@ -42,4 +43,4 @@ Python, FastAPI, PostgreSQL (Neon), psycopg, Stripe, Render
 ## How payments stay correct
 1. **Checkout:** Stripe hosts the card page, so card data never touches this server.
 2. **Webhook:** each event's signature is verified, and a UNIQUE constraint on the Stripe session id makes repeat deliveries harmless.
-3. **Reconciliation:** completed sessions are pulled from Stripe and any missing payments are added safely.
+3. **Reconciliation:** completed sessions are pulled from Stripe and any missing payments are added safely. A GitHub Actions workflow runs this every night at 02:00 UTC.
